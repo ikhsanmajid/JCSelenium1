@@ -19,6 +19,8 @@ public class Main {
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 
+        JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
+
         WebElement root = driver.findElement(By.xpath("//div[@id='root']"));
 
 
@@ -27,19 +29,23 @@ public class Main {
 
         System.out.println("Memasukkan username dan password");
         username.sendKeys("standard_user");
-        password.sendKeys("secret_sauce" + Keys.ENTER);
+        password.sendKeys("secret_sauce");
+        delay(2);
+        root.findElement(By.id("login-button")).click();
 
         System.out.print("Test Login: ");
         String resultSuccessLogin = assertEqualsGetText("//div[contains(@class, 'header_secondary_container')]/span[contains(@class, 'title')]", "Products");
         System.out.println(resultSuccessLogin);
 
-        List<WebElement> itemsAdd = root.findElements(By.xpath("//div[contains(@class, 'inventory_item')]//div[contains(@class, 'pricebar')]/button"));
+        //==============Add 2 items
+
+        List<WebElement> items = root.findElements(By.xpath("//div[contains(@class, 'inventory_item')]//div[contains(@class, 'pricebar')]/button"));
 
         System.out.println("Adding 2 items to cart");
         System.out.print("Test Add to Cart: ");
 
-        itemsAdd.get(0).click();
-        itemsAdd.get(1).click();
+        items.get(0).click();
+        items.get(1).click();
 
         String cartItemsAdd2 = assertEqualsGetText("//div[@id='shopping_cart_container']/a[@class='shopping_cart_link']", "2");
         System.out.println(cartItemsAdd2);
@@ -47,17 +53,21 @@ public class Main {
         System.out.println();
         delay(2);
 
+        //==============Add 2 more items
+
         System.out.println("Adding 2 more items to cart");
         System.out.print("Test Add to Cart: ");
         List<WebElement> itemsAdd4 = root.findElements(By.xpath("//div[contains(@class, 'inventory_item')]//div[contains(@class, 'pricebar')]/button"));
-        itemsAdd.get(2).click();
-        itemsAdd.get(3).click();
+        items.get(2).click();
+        items.get(3).click();
 
         String cartItemsAdd4 = assertEqualsGetText("//div[@id='shopping_cart_container']/a[@class='shopping_cart_link']", "4");
         System.out.println(cartItemsAdd4);
 
         System.out.println();
         delay(2);
+
+        //==============Remove 2 items
 
         List<WebElement> itemsRemove = root.findElements(By.xpath("//div[contains(@class, 'inventory_item')]//div[contains(@class, 'pricebar')]/button"));
 
@@ -72,6 +82,8 @@ public class Main {
         System.out.println();
         delay(2);
 
+        //==============Remove 2 more items
+
         System.out.println("Removing 2 more items from cart");
         System.out.print("Test Removing 2 items from Cart: ");
         itemsRemove.get(2).click();
@@ -83,6 +95,74 @@ public class Main {
         System.out.println();
         delay(2);
 
+        //==============Checkout
+
+        List<WebElement> itemsCheckout = root.findElements(By.xpath("//div[contains(@class, 'inventory_item')]//div[contains(@class, 'pricebar')]/button"));
+
+        System.out.print("Checkout Test");
+        System.out.println("Adding 3 items to cart");
+        System.out.print("Test Add to Cart: ");
+
+        itemsCheckout.get(0).click();
+        itemsCheckout.get(1).click();
+        itemsCheckout.get(3).click();
+
+        String cartItemsAdd3 = assertEqualsGetText("//div[@id='shopping_cart_container']/a[@class='shopping_cart_link']", "3");
+        System.out.println(cartItemsAdd3);
+
+        System.out.println();
+        delay(2);
+
+
+        System.out.println("Shopping Cart");
+        root.findElement(By.xpath("//div[@id='shopping_cart_container']/a[@class='shopping_cart_link']")).click();
+        System.out.print("Test Display Checkout: ");
+        String btnCheckout = assertEqualsGetText("//button[@id='checkout']", "Checkout");
+        System.out.println(btnCheckout);
+        root.findElement(By.xpath("//div[@id='shopping_cart_container']/a[@class='shopping_cart_link']")).click();
+        System.out.print("Test Check Item = 3: ");
+        List<WebElement> itemsCount = root.findElements(By.xpath("//div[@class='cart_list']/div[@class='cart_item']"));
+        System.out.println(itemsCount.size() == 3 ? "pass" : "fail");
+
+        delay(2);
+
+        root.findElement(By.id("checkout")).click();
+        System.out.println("Checkout clicked....");
+
+        WebElement firstName = root.findElement(By.id("first-name"));
+        WebElement lastName = root.findElement(By.id("last-name"));
+        WebElement postalCode = root.findElement(By.id("postal-code"));
+
+
+        System.out.println("Memasukkan alamat....");
+        firstName.sendKeys("Ikhsan");
+        lastName.sendKeys("Majid");
+        postalCode.sendKeys("11111");
+
+        delay(2);
+
+        System.out.println("Click continue....");
+        root.findElement(By.id("continue")).click();
+
+        System.out.println("Click finish....");
+        WebElement finishBtn = root.findElement(By.id("finish"));
+        delay(2);
+        jsExecutor.executeScript("arguments[0].scrollIntoView(true)", finishBtn);
+        delay(2);
+        finishBtn.click();
+
+        System.out.println();
+        System.out.println("Checkout Success Test");
+        System.out.print("Test halaman Finish: ");
+        String displayFinished = assertEqualsGetText("//div[@id='checkout_complete_container']//h2[@class='complete-header']", "Thank you for your order!");
+        System.out.println(displayFinished);
+        System.out.println("BacktoHome clicked....");
+        delay(2);
+        root.findElement(By.id("back-to-products")).click();
+
+        delay(2);
+
+        System.out.println();
         System.out.print("Logout Test: ");
         WebElement hamburgerBtn = root.findElement(By.xpath("//button[@id='react-burger-menu-btn']"));
         hamburgerBtn.click();
