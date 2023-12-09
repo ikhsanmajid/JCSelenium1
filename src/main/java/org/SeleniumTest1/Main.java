@@ -29,7 +29,7 @@ public class Main {
         password.sendKeys("secret_sauce" + Keys.ENTER);
 
         System.out.print("Test Login: ");
-        String resultSuccessLogin = assertEquals("//div[contains(@class, 'header_secondary_container')]/span[contains(@class, 'title')]", "Products");
+        String resultSuccessLogin = assertEqualsGetText("//div[contains(@class, 'header_secondary_container')]/span[contains(@class, 'title')]", "Products");
         System.out.println(resultSuccessLogin);
 
         System.out.println("Adding 2 items to cart");
@@ -38,9 +38,10 @@ public class Main {
         itemsAdd.get(0).click();
         itemsAdd.get(1).click();
 
-        String cartItemsAdd = assertEquals("//div[@id='shopping_cart_container']/a[@class='shopping_cart_link']", "2");
+        String cartItemsAdd = assertEqualsGetText("//div[@id='shopping_cart_container']/a[@class='shopping_cart_link']", "2");
         System.out.println(cartItemsAdd);
 
+        System.out.println();
         delay(2);
 
         System.out.println("Removing 2 items from cart");
@@ -49,8 +50,22 @@ public class Main {
         itemsRemove.get(0).click();
         itemsRemove.get(1).click();
 
-        String cartItemsRemove = assertEquals("//div[@id='shopping_cart_container']/a[@class='shopping_cart_link']", "");
+        String cartItemsRemove = assertEqualsGetText("//div[@id='shopping_cart_container']/a[@class='shopping_cart_link']", "");
         System.out.println(cartItemsRemove);
+
+        System.out.println();
+        delay(2);
+
+        System.out.print("Logout Test: ");
+        WebElement hamburgerBtn = root.findElement(By.xpath("//button[@id='react-burger-menu-btn']"));
+        hamburgerBtn.click();
+        delay(1);
+        WebElement logoutBtn = root.findElement(By.xpath("//nav[@class='bm-item-list']/a[@id='logout_sidebar_link']"));
+        logoutBtn.click();
+        String textLogin = assertEqualsGetAttribute("//input[@id='login-button']", "value", "Login");
+        System.out.println(textLogin);
+
+
     }
 
     static void delay(long second) {
@@ -61,7 +76,7 @@ public class Main {
         }
     }
 
-    static String assertEquals(String stringXPath, String expected) {
+    static String assertEqualsGetText(String stringXPath, String expected) {
         try {
             String elementText = driver.findElement(By.xpath(stringXPath)).getText();
             if ( elementText.contains(expected) ) {
@@ -71,6 +86,22 @@ public class Main {
             }
         } catch (WebDriverException e) {
             //String errorMsg = e.getMessage();
+            //System.out.print("Element not found...skipping test");
+            return "fail";
+        }
+    }
+
+    static String assertEqualsGetAttribute(String stringXPath, String attribute, String expected) {
+        try {
+            String elementText = driver.findElement(By.xpath(stringXPath)).getAttribute(attribute);
+            if ( elementText.contains(expected) ) {
+                return "pass";
+            }else{
+                return "fail";
+            }
+        } catch (WebDriverException e) {
+            //String errorMsg = e.getMessage();
+            //System.out.print("Element not found...skipping test");
             return "fail";
         }
     }
