@@ -32,26 +32,52 @@ public class Main {
         String resultSuccessLogin = assertEqualsGetText("//div[contains(@class, 'header_secondary_container')]/span[contains(@class, 'title')]", "Products");
         System.out.println(resultSuccessLogin);
 
+        List<WebElement> itemsAdd = root.findElements(By.xpath("//div[contains(@class, 'inventory_item')]//div[contains(@class, 'pricebar')]/button"));
+
         System.out.println("Adding 2 items to cart");
         System.out.print("Test Add to Cart: ");
-        List<WebElement> itemsAdd = root.findElements(By.xpath("//div[contains(@class, 'inventory_item')]//div[contains(@class, 'pricebar')]/button"));
+
         itemsAdd.get(0).click();
         itemsAdd.get(1).click();
 
-        String cartItemsAdd = assertEqualsGetText("//div[@id='shopping_cart_container']/a[@class='shopping_cart_link']", "2");
-        System.out.println(cartItemsAdd);
+        String cartItemsAdd2 = assertEqualsGetText("//div[@id='shopping_cart_container']/a[@class='shopping_cart_link']", "2");
+        System.out.println(cartItemsAdd2);
 
         System.out.println();
         delay(2);
 
-        System.out.println("Removing 2 items from cart");
-        System.out.print("Test Remove from Cart: ");
+        System.out.println("Adding 2 more items to cart");
+        System.out.print("Test Add to Cart: ");
+        List<WebElement> itemsAdd4 = root.findElements(By.xpath("//div[contains(@class, 'inventory_item')]//div[contains(@class, 'pricebar')]/button"));
+        itemsAdd.get(2).click();
+        itemsAdd.get(3).click();
+
+        String cartItemsAdd4 = assertEqualsGetText("//div[@id='shopping_cart_container']/a[@class='shopping_cart_link']", "4");
+        System.out.println(cartItemsAdd4);
+
+        System.out.println();
+        delay(2);
+
         List<WebElement> itemsRemove = root.findElements(By.xpath("//div[contains(@class, 'inventory_item')]//div[contains(@class, 'pricebar')]/button"));
+
+        System.out.println("Removing 2 items from cart");
+        System.out.print("Test Removing 2 items from Cart: ");
         itemsRemove.get(0).click();
         itemsRemove.get(1).click();
 
-        String cartItemsRemove = assertEqualsGetText("//div[@id='shopping_cart_container']/a[@class='shopping_cart_link']", "");
-        System.out.println(cartItemsRemove);
+        String cartItemsRemove2 = assertEqualsGetText("//div[@id='shopping_cart_container']/a[@class='shopping_cart_link']", "2");
+        System.out.println(cartItemsRemove2);
+
+        System.out.println();
+        delay(2);
+
+        System.out.println("Removing 2 more items from cart");
+        System.out.print("Test Removing 2 items from Cart: ");
+        itemsRemove.get(2).click();
+        itemsRemove.get(3).click();
+
+        String cartItemsRemove0 = assertEqualsGetText("//div[@id='shopping_cart_container']/a[@class='shopping_cart_link']", "");
+        System.out.println(cartItemsRemove0);
 
         System.out.println();
         delay(2);
@@ -79,7 +105,7 @@ public class Main {
     static String assertEqualsGetText(String stringXPath, String expected) {
         try {
             String elementText = driver.findElement(By.xpath(stringXPath)).getText();
-            if ( elementText.contains(expected) ) {
+            if ( elementText.equals(expected) ) {
                 return "pass";
             }else{
                 return "fail";
@@ -94,7 +120,7 @@ public class Main {
     static String assertEqualsGetAttribute(String stringXPath, String attribute, String expected) {
         try {
             String elementText = driver.findElement(By.xpath(stringXPath)).getAttribute(attribute);
-            if ( elementText.contains(expected) ) {
+            if ( elementText.equals(expected) ) {
                 return "pass";
             }else{
                 return "fail";
