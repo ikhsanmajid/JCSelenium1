@@ -16,6 +16,7 @@ public class Main {
 
         System.out.println("Opening browser and website..");
         driver.get("https://www.saucedemo.com/");
+        driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 
         WebElement root = driver.findElement(By.xpath("//div[@id='root']"));
